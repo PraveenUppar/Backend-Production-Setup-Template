@@ -2,16 +2,37 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
+import logger from './utils/logger.js';
 import userRoute from './routes/user.route.js';
 import todoRoute from './routes/todo.route.js';
 
 dotenv.config();
+
 const app = express();
 app.use(helmet());
 app.use(cors());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const morganFormat = ':method :url :status :response-time ms';
+
+app.use(
+  morgan(morganFormat, {
+    stream: {
+      write: (message) => {
+        // Use the 'info' level of our custom logger
+        const logObject = {
+          method: message.split(' ')[0],
+          url: message.split(' ')[1],
+          status: message.split(' ')[2],
+          responseTime: message.split(' ')[3],
+        };
+        logger.info(JSON.stringify(logObject));
+      },
+    },
+  }),
+);
 
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1', todoRoute);

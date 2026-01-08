@@ -6,6 +6,7 @@ import {
   deleteTodoController,
   patchTodoController,
 } from '../controllers/todo.controller';
+// import validate from '../middlewares/validate.middleware';
 
 const todoRouter = Router();
 todoRouter.use(authMiddleware);
