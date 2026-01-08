@@ -8,7 +8,7 @@ class AppError extends Error {
     this.statusCode = statusCode;
     // If code is 4xx, status is 'fail'. If 5xx, status is 'error'.
     this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
-    // Operational = True means "We expected this could happen" (like wrong password)
+    // Operational = True means "We expected this could happen"
     // Operational = False means "Code bug/Crash"
     this.isOperational = true;
 

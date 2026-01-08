@@ -39,7 +39,7 @@ app.use(
 
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1', todoRoute);
-app.all('*', (req: Request, res: Response, next: NextFunction) => {
+app.all('/*splat', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Not Found`, 404));
 });
 app.use(globalErrorHandler);

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { Prisma } from '@prisma/client';
-import AppError from '../utils/AppError';
 import logger from '../utils/logger';
 
 const globalErrorHandler = (
@@ -32,7 +31,7 @@ const globalErrorHandler = (
     }
   }
 
-  // 3. Send Response (Dev vs Prod)
+  // Send Response (Dev vs Prod)
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else {
