@@ -1,0 +1,42 @@
+import { Request, Response, NextFunction } from 'express';
+import { Ratelimit } from '@upstash/ratelimit';
+import redis from '../redis/redis.js';
+import AppError from '../utils/AppError.js';
+
+const limiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(5, '60 s'),
+  analytics: true,
+  prefix: '@upstash/ratelimit',
+});
+
+export const rateLimitMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const identifier =
+      (req.headers['x-forwarded-for'] as string) ||
+      req.socket.remoteAddress ||
+      '127.0.0.1';
+
+    const { success, limit, remaining, reset } =
+      await limiter.limit(identifier);
+
+    res.setHeader('X-RateLimit-Limit', limit);
+    res.setHeader('X-RateLimit-Remaining', remaining);
+    res.setHeader('X-RateLimit-Reset', reset);
+
+    if (!success) {
+      return next(
+        new AppError('Too many requests, please try again in a minute.', 429),
+      );
+    }
+
+    next();
+  } catch (error) {
+    console.error('Rate Limiter Error:', error);
+    next();
+  }
+};

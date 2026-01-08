@@ -41,6 +41,7 @@ const getTodoController = async (
       success: true,
       message: 'Todos retrieved successfully',
       data: todos,
+      // meta: todos.meta,
     });
   } catch (error) {
     return next(new AppError('Failed to create todo', 500));

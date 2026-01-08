@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
+import { rateLimitMiddleware } from './middlewares/ratelimit.middleware';
 import logger from './utils/logger.js';
 import globalErrorHandler from './middlewares/error.middleware.js';
 import AppError from './utils/AppError.js';
@@ -14,23 +14,14 @@ import { prisma } from './libs/prisma.js';
 import redis from './redis/redis.js';
 
 dotenv.config();
-
 const app = express();
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true,
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  message: 'Too many requests from this IP, please try again after 15 minutes',
-});
+app.use(rateLimitMiddleware);
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(limiter);
 
 const morganFormat = ':method :url :status :response-time ms';
 
@@ -38,7 +29,6 @@ app.use(
   morgan(morganFormat, {
     stream: {
       write: (message) => {
-        // Use the 'info' level of our custom logger
         const logObject = {
           method: message.split(' ')[0],
           url: message.split(' ')[1],
@@ -53,21 +43,19 @@ app.use(
 
 app.get('/health', async (req: Request, res: Response) => {
   try {
-    // Check DB connection
     await prisma.$queryRaw`SELECT 1`;
-    // Check Redis connection
-    await redis.ping();
-
+    const pong = await redis.ping();
     res.status(200).json({
-      status: 'active',
-      uptime: process.uptime(),
-      db: 'connected',
-      redis: 'connected',
+      status: 'Active',
+      services: {
+        database: 'Connected',
+        redis: pong === 'PONG' ? 'connected' : 'unexpected response',
+      },
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(503).json({
       status: 'Inactive',
-      error: 'Service unavailable',
+      error: error.message,
     });
   }
 });

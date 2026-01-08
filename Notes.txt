@@ -2,18 +2,18 @@ Phase 1: Data Modeling                              -- DONE
 Phase 2: API Development                            -- DONE
 Phase 3: Logging                                    -- DONE
 Phase 4: Testing                                    -- 
-Phase 5: Caching                                    -- 
+Phase 5: Caching                                    -- DONE
 Phase 6: Scaling & Deployment                       -- 
-Phase 7: Pagination                                 -- 
+Phase 7: Pagination                                 -- DONE
 Phase 8: Validation                                 -- DONE
 Phase 9: Error Handling                             -- DONE
 Phase 10: Docker                                    -- 
 Phase 11: Kubernetes                                -- 
 Phase 12: CI CD                                     -- 
-Phase 13 Open API using sawgger                     --
-Phase 14 Health check points                        -- 
+Phase 13 Open API using sawgger                     -- 
+Phase 14 Health check points                        -- DONE
 Phase 15 Monitoring                                 -- 
-Phase 16 Rate limiting                              --   
+Phase 16 Rate limiting                              -- DONE
 
 
 Request → [Logger] → [Zod Validation] → Controller → Service → Database (If anything fails) ↘ [Global Error Handler] → Response

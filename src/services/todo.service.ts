@@ -1,15 +1,9 @@
 import { prisma } from '../libs/prisma.js';
 
-interface TodoData {
-  title: string;
-  completed: boolean;
-}
-interface UpdateData {
-  title?: string;
-  completed?: boolean;
-}
-
-const createTodoService = async (userId: string, tododata: TodoData) => {
+const createTodoService = async (
+  userId: string,
+  tododata: { title: string; completed: boolean },
+) => {
   const newTodo = await prisma.todo.create({
     data: {
       title: tododata.title,
@@ -17,12 +11,13 @@ const createTodoService = async (userId: string, tododata: TodoData) => {
       userId: userId,
     },
   });
+
   return newTodo;
 };
 
 const getTodoService = async () => {
   const todos = await prisma.todo.findMany();
-  return todos;
+  return { data: todos, meta: { total: todos.length } };
 };
 
 const deleteTodoService = async (id: string) => {
@@ -30,11 +25,8 @@ const deleteTodoService = async (id: string) => {
   return todo;
 };
 
-const patchTodoService = async (id: string, tododata: UpdateData) => {
-  const update = await prisma.todo.update({
-    where: { id: id },
-    data: tododata,
-  });
+const patchTodoService = async (id: string, tododata: any) => {
+  const update = await prisma.todo.update({ where: { id }, data: tododata });
   return update;
 };
 

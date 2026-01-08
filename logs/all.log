@@ -84,3 +84,57 @@ Unique constraint failed on the fields: (`email`)
 2026-01-08 21:11:48 [31merror[39m: [31mRedis Connection Error: Error: connect EPERM /[39m
 2026-01-08 21:11:49 [31merror[39m: [31mRedis Connection Error: Error: connect EPERM /[39m
 2026-01-08 21:11:49 [31merror[39m: [31mRedis Connection Error: Error: connect EPERM /[39m
+2026-01-08 21:21:35 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"5167.149"}[39m
+2026-01-08 21:34:52 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4642.607"}[39m
+2026-01-08 21:35:01 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"194.131"}[39m
+2026-01-08 21:35:13 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4379.567"}[39m
+2026-01-08 21:39:09 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4709.424"}[39m
+2026-01-08 21:55:58 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4691.561"}[39m
+2026-01-08 21:58:16 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"182.190"}[39m
+2026-01-08 21:58:19 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"22.801"}[39m
+2026-01-08 21:58:51 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4696.021"}[39m
+2026-01-08 22:00:22 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4575.288"}[39m
+2026-01-08 22:04:52 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4652.010"}[39m
+2026-01-08 22:30:22 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"5088.478"}[39m
+2026-01-08 22:33:42 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4622.326"}[39m
+2026-01-08 22:37:30 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"471.635"}[39m
+2026-01-08 22:39:49 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"452.302"}[39m
+2026-01-08 22:42:44 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/auth/login","status":"200","responseTime":"394.937"}[39m
+2026-01-08 22:43:37 [31merror[39m: [31mPOST /api/v1/create 500 - Failed to create todo[39m
+2026-01-08 22:43:37 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"500","responseTime":"4483.166"}[39m
+2026-01-08 22:45:01 [31merror[39m: [31mPOST /api/v1/create 500 - Failed to create todo[39m
+2026-01-08 22:45:01 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"500","responseTime":"4774.905"}[39m
+2026-01-08 22:46:22 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"201","responseTime":"287.688"}[39m
+2026-01-08 22:46:31 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"201","responseTime":"35.983"}[39m
+2026-01-08 22:46:41 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"201","responseTime":"32.920"}[39m
+2026-01-08 22:46:50 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"201","responseTime":"31.496"}[39m
+2026-01-08 22:46:58 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"201","responseTime":"26.422"}[39m
+2026-01-08 22:47:06 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/create","status":"201","responseTime":"25.813"}[39m
+2026-01-08 22:47:27 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:47:27 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"5.073"}[39m
+2026-01-08 22:47:59 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:47:59 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"9.022"}[39m
+2026-01-08 22:48:24 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:48:24 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"7.677"}[39m
+2026-01-08 22:51:22 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:51:22 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"10.300"}[39m
+2026-01-08 22:52:04 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:52:04 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"9.398"}[39m
+2026-01-08 22:52:06 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:52:06 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"2.185"}[39m
+2026-01-08 22:52:59 [31merror[39m: [31mPOST /api/v1/todo 404 - Not Found[39m
+2026-01-08 22:52:59 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/todo","status":"404","responseTime":"7.505"}[39m
+2026-01-08 22:53:14 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"274.428"}[39m
+2026-01-08 22:54:13 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"204.850"}[39m
+2026-01-08 23:01:56 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"403.031"}[39m
+2026-01-08 23:04:46 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"310.196"}[39m
+2026-01-08 23:04:59 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"175.969"}[39m
+2026-01-08 23:05:04 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"29.341"}[39m
+2026-01-08 23:05:08 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"25.085"}[39m
+2026-01-08 23:05:22 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"-","responseTime":"-"}[39m
+2026-01-08 23:05:23 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"27.500"}[39m
+2026-01-08 23:05:24 [31merror[39m: [31mGET /api/v1/todo 429 - Too many requests, please try again in a minute.[39m
+2026-01-08 23:06:25 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"171.802"}[39m
+2026-01-08 23:07:03 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"217.789"}[39m
+2026-01-08 23:07:49 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"283.960"}[39m
+2026-01-08 23:08:23 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"197.852"}[39m
