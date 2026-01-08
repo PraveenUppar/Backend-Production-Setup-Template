@@ -21,7 +21,7 @@ const validate =
           success: false,
           message: 'Validation Error',
           errors: error.issues.map((err: any) => ({
-            field: err.path[1], // e.g., "email"
+            field: err.path[1],
             message: err.message, // e.g., "Invalid email format"
           })),
         });

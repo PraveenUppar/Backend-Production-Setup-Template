@@ -13,9 +13,10 @@ const sendError = (res: Response, statusCode: number, message: string) => {
 const registerUserController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return sendError(res, 400, 'Email and password are required');
-    }
+    // zod validation
+    // if (!email || !password) {
+    //   return sendError(res, 400, 'Email and password are required');
+    // }
     const newUser = await createUserService({ email, password });
     return res.status(201).json({
       success: true,
@@ -31,9 +32,10 @@ const registerUserController = async (req: Request, res: Response) => {
 const loginUserController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return sendError(res, 400, 'Email and password are required');
-    }
+    //  zod validation
+    // if (!email || !password) {
+    //   return sendError(res, 400, 'Email and password are required');
+    // }
 
     const user = await findUserService(email);
     if (!user) {
