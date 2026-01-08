@@ -1,9 +1,12 @@
 import express from 'express';
+import { Response, Request, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import logger from './utils/logger.js';
+import globalErrorHandler from './middlewares/error.middleware.js';
+import AppError from './utils/AppError.js';
 import userRoute from './routes/user.route.js';
 import todoRoute from './routes/todo.route.js';
 
@@ -36,7 +39,9 @@ app.use(
 
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1', todoRoute);
-
-// Global error handling
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Not Found`, 404));
+});
+app.use(globalErrorHandler);
 
 export default app;
