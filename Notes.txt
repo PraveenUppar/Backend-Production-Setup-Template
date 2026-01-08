@@ -1,12 +1,12 @@
 Phase 1: Data Modeling                              -- DONE
 Phase 2: API Development                            -- DONE
-Phase 3: Logging                                    -- 
+Phase 3: Logging                                    -- DONE
 Phase 4: Testing                                    -- 
 Phase 5: Caching                                    -- 
 Phase 6: Scaling & Deployment                       -- 
 Phase 7: Pagination                                 -- 
-Phase 8: Validation                                 -- 
-Phase 9: Error Handling                             -- 
+Phase 8: Validation                                 -- DONE
+Phase 9: Error Handling                             -- DONE
 Phase 10: Docker                                    -- 
 Phase 11: Kubernetes                                -- 
 Phase 12: CI CD                                     -- 
@@ -17,13 +17,3 @@ Phase 16 Rate limiting                              --
 
 
 Request → [Logger] → [Zod Validation] → Controller → Service → Database (If anything fails) ↘ [Global Error Handler] → Response
-
-The typical approach is to implement a centralized error handling middleware or handler. For example, in Express.js, you'd create an error middleware that catches all errors.
-
-At the route/controller level, wrap your logic in try-catch blocks to catch expected errors. 
-For database operations, handle connection failures and query errors. 
-For external API calls, handle network timeouts and failed responses. 
-Then let unexpected errors bubble up to your global error handler.
-
-In development, you typically log to the console with detailed information. In production, you log to files or external services like CloudWatch, Datadog, or ELK stack, with structured formats that can be searched and analyzed.
-

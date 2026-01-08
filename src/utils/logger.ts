@@ -1,4 +1,7 @@
 import winston from 'winston';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const levels = {
   error: 0,
@@ -19,7 +22,7 @@ const colors = {
 winston.addColors(colors);
 
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'development' ? 'debug' : 'warn',
+  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
   levels,
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),

@@ -1,14 +1,14 @@
 {
   "name": "todo",
   "version": "1.0.0",
-  "description": "",
+  "description": "A production ready template for backend services",
   "main": "index.ts",
   "scripts": {
     "build": "npx tsc",
     "dev": "nodemon",
     "start": "node dist/server.js",
     "format": "prettier . --check ",
-    "format:fix": "prettier . --fix",
+    "format:fix": "prettier . --write",
     "prepare": "husky"
   },
   "keywords": [],
