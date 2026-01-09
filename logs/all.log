@@ -228,3 +228,5 @@ Unique constraint failed on the fields: (`email`)
 2026-01-09 23:32:00 [31merror[39m: [31mrequest_failed Not Found[39m
 2026-01-09 23:32:00 [35mhttp[39m: [35mGET /health/databasees 404 - 8.44ms[39m
 2026-01-09 23:32:00 [32minfo[39m: [32m{"method":"GET","url":"/health/databasees","status":"404","responseTime":"5.169"}[39m
+2026-01-09 23:40:05 [35mhttp[39m: [35mGET /health/database 200 - 313.89ms[39m
+2026-01-09 23:40:05 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"311.487"}[39m

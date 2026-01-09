@@ -9,7 +9,13 @@ const globalErrorHandler = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
     // log the method, URL, status code, and the error message
-    logger_1.default.error(`${req.method} ${req.originalUrl} ${err.statusCode} - ${err.message}`);
+    logger_1.default.error('request_failed', {
+        method: req.method,
+        path: req.originalUrl,
+        statusCode: err.statusCode,
+        message: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    });
     // Handle Specific Prisma Errors (Database issues)
     if (err instanceof client_1.Prisma.PrismaClientKnownRequestError) {
         // P2002: Unique constraint failed
