@@ -5,7 +5,7 @@ import AppError from '../utils/AppError.js';
 
 const limiter = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.slidingWindow(5, '60 s'),
+  limiter: Ratelimit.slidingWindow(10, '60 s'),
   analytics: true,
   prefix: '@upstash/ratelimit',
 });

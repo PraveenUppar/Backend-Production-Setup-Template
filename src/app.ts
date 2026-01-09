@@ -41,14 +41,28 @@ app.use(
   }),
 );
 
-app.get('/health', async (req: Request, res: Response) => {
+app.get('/health/database', async (req: Request, res: Response) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    const pong = await redis.ping();
     res.status(200).json({
       status: 'Active',
       services: {
         database: 'Connected',
+      },
+    });
+  } catch (error: any) {
+    res.status(503).json({
+      status: 'Inactive',
+      error: error.message,
+    });
+  }
+});
+app.get('/health/redis', async (req: Request, res: Response) => {
+  try {
+    const pong = await redis.ping();
+    res.status(200).json({
+      status: 'Active',
+      services: {
         redis: pong === 'PONG' ? 'connected' : 'unexpected response',
       },
     });

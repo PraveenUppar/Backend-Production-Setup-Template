@@ -143,3 +143,44 @@ Unique constraint failed on the fields: (`email`)
 2026-01-08 23:23:08 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"83.570"}[39m
 2026-01-08 23:23:10 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"26.048"}[39m
 2026-01-08 23:23:11 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/todo","status":"200","responseTime":"44.408"}[39m
+2026-01-08 23:44:27 [32minfo[39m: [32m{"method":"GET","url":"/api-docs","status":"301","responseTime":"5.233"}[39m
+2026-01-08 23:44:27 [32minfo[39m: [32m{"method":"GET","url":"/api-docs/","status":"200","responseTime":"4.195"}[39m
+2026-01-08 23:44:27 [32minfo[39m: [32m{"method":"GET","url":"/api-docs/swagger-ui.css","status":"200","responseTime":"11.277"}[39m
+2026-01-08 23:44:27 [32minfo[39m: [32m{"method":"GET","url":"/api-docs/swagger-ui-bundle.js","status":"200","responseTime":"7.045"}[39m
+2026-01-08 23:44:27 [31merror[39m: [31mGET /api-docs/swagger-ui-init.js 429 - Too many requests, please try again in a minute.[39m
+2026-01-08 23:44:27 [32minfo[39m: [32m{"method":"GET","url":"/api-docs/swagger-ui-standalone-preset.js","status":"200","responseTime":"9.070"}[39m
+2026-01-08 23:44:27 [31merror[39m: [31mGET /api-docs/favicon-32x32.png 429 - Too many requests, please try again in a minute.[39m
+2026-01-08 23:44:27 [31merror[39m: [31mGET /api-docs/favicon-16x16.png 429 - Too many requests, please try again in a minute.[39m
+2026-01-09 18:44:04 [32minfo[39m: [32m{"method":"GET","url":"/api/v1","status":"401","responseTime":"1.771"}[39m
+2026-01-09 18:44:04 [31merror[39m: [31mGET /favicon.ico 404 - Not Found[39m
+2026-01-09 18:44:04 [32minfo[39m: [32m{"method":"GET","url":"/favicon.ico","status":"404","responseTime":"2.962"}[39m
+2026-01-09 18:44:15 [32minfo[39m: [32m{"method":"GET","url":"/api/v1/api-docs","status":"401","responseTime":"0.240"}[39m
+2026-01-09 18:55:50 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/auth/login","status":"200","responseTime":"1601.944"}[39m
+2026-01-09 19:19:05 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/auth/login","status":"200","responseTime":"377.768"}[39m
+2026-01-09 19:55:00 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"283.933"}[39m
+2026-01-09 19:55:12 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"189.403"}[39m
+2026-01-09 19:55:25 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"240.508"}[39m
+2026-01-09 19:55:27 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"55.753"}[39m
+2026-01-09 19:56:11 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"579.526"}[39m
+2026-01-09 19:56:14 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"55.356"}[39m
+2026-01-09 20:19:12 [32minfo[39m: [32m{"method":"POST","url":"/api/v1/auth/login","status":"200","responseTime":"323.944"}[39m
+2026-01-09 20:19:18 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"200","responseTime":"71.507"}[39m
+2026-01-09 20:21:53 [32minfo[39m: [32m{"method":"GET","url":"/health","status":"503","responseTime":"4593.098"}[39m
+2026-01-09 20:24:05 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"93.014"}[39m
+2026-01-09 20:24:12 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"247.434"}[39m
+2026-01-09 20:24:19 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"80.704"}[39m
+2026-01-09 20:24:34 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"152.807"}[39m
+2026-01-09 20:24:40 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"338.393"}[39m
+2026-01-09 20:25:02 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"81.866"}[39m
+2026-01-09 20:25:04 [31merror[39m: [31mGET /health/database 429 - Too many requests, please try again in a minute.[39m
+2026-01-09 20:25:12 [31merror[39m: [31mGET /health/redis 429 - Too many requests, please try again in a minute.[39m
+2026-01-09 20:25:36 [31merror[39m: [31mGET /health/redis 429 - Too many requests, please try again in a minute.[39m
+2026-01-09 20:25:39 [31merror[39m: [31mGET /health/database 429 - Too many requests, please try again in a minute.[39m
+2026-01-09 20:26:13 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"90.614"}[39m
+2026-01-09 20:26:16 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"231.972"}[39m
+2026-01-09 20:39:03 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"243.515"}[39m
+2026-01-09 20:39:06 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"30.712"}[39m
+2026-01-09 20:39:22 [32minfo[39m: [32m{"method":"GET","url":"/health/redis","status":"200","responseTime":"97.837"}[39m
+2026-01-09 20:39:24 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"206.426"}[39m
+2026-01-09 20:43:26 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"271.020"}[39m
+2026-01-09 20:43:41 [32minfo[39m: [32m{"method":"GET","url":"/health/database","status":"200","responseTime":"181.568"}[39m
