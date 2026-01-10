@@ -26,6 +26,8 @@ spec:
           envFrom:
             - secretRef:
                 name: todo-backend-secrets
+            - configMapRef:
+                name: todo-backend-config
           resources:
             requests:
               cpu: '100m'

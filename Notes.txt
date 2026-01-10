@@ -200,20 +200,35 @@ It listens on ports 80 / 443
 It reads Ingress rules
 It forwards traffic to Services
 
+kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
+This means:
+
+“Create a tunnel from my laptop port 8080 → ingress controller port 80 inside Kubernetes”
+
+No Docker networking.
+No NodePort.
+No LoadBalancer.
+Just a direct pipe.
+
 Traffic flow in Development
-Browser
-  ↓
-/etc/hosts (todo.local → 127.0.0.1)
-  ↓
-NodePort (32419)
-  ↓
-Ingress NGINX Pod
-  ↓
-Ingress rules (Host + Path)
-  ↓
-Service
-  ↓
-Pod
+curl
+ ↓
+todo.local → 127.0.0.1
+ ↓
+localhost:8080   (port-forward)
+ ↓
+Ingress Controller (NGINX)
+ ↓
+Ingress rule: Host = todo.local
+ ↓
+Service: todo-backend
+ ↓
+Healthy Pod
+ ↓
+Express app
+ ↓
+/health/database
+
 
 Traffic flow in production
 Internet
@@ -227,6 +242,9 @@ Ingress Controller
 Service
   ↓
 Pods
+
+“Ingress defines routing inside Kubernetes, but it doesn’t expose traffic by itself. In production, a cloud load balancer forwards traffic to the ingress controller. 
+In local environments like kind, we use port-forwarding or node port mappings to simulate that exposure.
 ---------------------------------------------------------------------------
 When someone asks:
 
@@ -238,21 +256,83 @@ Your answer:
 The load balancer forwards traffic to an ingress controller.
 Ingress routes based on host/path to a service, which load-balances across pods.”
 ---------------------------------------------------------------------------
+Headers
+Key: Host
+Value: todo.local
+
+http://localhost:8080/api/v1/auth/login
+
+{
+    "email": "pavi@gmail.com",
+    "password": "pavi@123"
+}
+
+ "success": true,
+    "message": "Login successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwYTAyNzBhLWRjNzUtNDVhMC1iNWUwLTkyMGFhYTgzNzc2MiIsImlhdCI6MTc2ODAzMjk1OCwiZXhwIjoxNzY4MDM2NTU4fQ.uPvRo5pXEajJtPfoNCv5Pvh75p1-BOVYQcX46yZP2og",
+    "user": {
+        "email": "pavi@gmail.com"
+    }
+
+
+In production:
+
+Port-forward = ❌ never
+Cloud Load Balancer = ✅ always
+
+
+Local (kind)	  Production
+port-forward	  AWS ALB / GCP LB
+localhost:8080	  api.todo.com
+/etc/hosts	     Route53 / Cloud DNS
+manual Host      header/real DNS
+---------------------------------------------------------------------------
+HPA 
+
+HPA = Horizontal Pod Autoscaler
+
+It answers one question repeatedly:
+
+“Do I need more pods or fewer pods right now?”
+
+It does this by watching metrics (CPU / memory / custom metrics).
+
+kubectl get apiservices | grep metrics
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+kubectl top pods -n todo-backend
+
+NAME                            CPU(cores)   MEMORY(bytes)   
+todo-backend-5dfb449b57-954jk   1m           36Mi
+todo-backend-5dfb449b57-svvdr   0m           36Mi
+todo-backend-5dfb449b57-wmssf   1m           34Mi
+
+kubectl get deploy todo-backend -n todo-backend -o yaml | grep -A10 resources
+
+resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+
+kubectl apply -f hpa.yaml
+kubectl get hpa -n todo-backend
+
+NAME               REFERENCE                 TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+todo-backend-hpa   Deployment/todo-backend   cpu: 0%/50%             2         4         3          7s
+
+kubectl describe hpa todo-backend-hpa -n todo-backendnd
+
+Name:                                                  todo-backend-hpa
+Namespace:                                             todo-backend
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Sat, 10 Jan 2026 08:25:45      
+Reference:                                             Deployment/todo-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  0% (0) / 50%
 
 ---------------------------------------------------------------------------
 
----------------------------------------------------------------------------
-
-🔹 Option A — HTTPS (TLS with cert-manager)
-
-Real certificates, HTTPS, production realism
-
-🔹 Option B — Autoscaling (HPA)
-
-Traffic-based scaling (very impressive)
-
-🔹 Option C — Secrets & ConfigMaps
-
-Production-safe config management
-
-👉 Tell me which one you want next
