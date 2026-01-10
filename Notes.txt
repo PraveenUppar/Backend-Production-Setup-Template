@@ -19,12 +19,6 @@ Phase 17 Observability                              --
 ---------------------------------------------------------------------------
 Request → [Logger] → [Zod Validation] → Controller → Service → Database (If anything fails) ↘ [Global Error Handler] → Response
 ---------------------------------------------------------------------------
-Tools for Measurement
-• Profiling: Measures where an application spends its time during execution (e.g., CPU-bound tasks)
-• Flame Graphs: A visualization tool for profiling data, showing the call stack and time spent in functions
-• Profilers are excellent for CPU-bound tasks but struggle with IO-bound tasks (database queries, external API calls)
-• Distributed Tracing: Tracks a request as it flows through the entire system, recording time spent at every step (DB, service layer, external calls)
----------------------------------------------------------------------------
 5 layers: The Big Picture
 
 TypeScript code
@@ -335,4 +329,23 @@ Metrics:                                               ( current / target )
   resource cpu on pods  (as a percentage of request):  0% (0) / 50%
 
 ---------------------------------------------------------------------------
+HTTPS with cert-manager
+
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+kubectl get pods -n cert-manager
+
+NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-859f5d5d75-8mz9z              1/1     Running   0          36s
+cert-manager-cainjector-6569c5c766-p7mdm   1/1     Running   0          36s
+cert-manager-webhook-54896b88d9-gnpg9      1/1     Running   0          36s
+
+kubectl apply -f cluster-issuer.yaml
+kubectl get clusterissuer
+
+NAME               READY   AGE
+letsencrypt-prod   True    6s
+
+kubectl apply -f ingress.yaml
+
+kubectl describe certificate -n todo-backend
 
