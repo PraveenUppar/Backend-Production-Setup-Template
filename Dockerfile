@@ -6,22 +6,19 @@ WORKDIR /app
 # ---------- Dependencies ----------
 FROM base AS deps
 
-# Prisma needs DATABASE_URL at generate time
-ARG DATABASE_URL="postgresql://user:pass@localhost:5432/db"
-ENV DATABASE_URL=${DATABASE_URL}
-
 COPY package.json package-lock.json ./
-# Read schema.prisma
 COPY prisma ./prisma
-# Generate Prisma Client
 COPY prisma.config.ts ./
+
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+ENV DIRECT_URL="postgresql://user:pass@localhost:5432/db"
+
 RUN npm ci
 RUN npx prisma generate
 
+
 # ---------- Build ----------
 FROM base AS build
-# Docker stages are isolated
-# COPY everything needed for build
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/prisma ./prisma
 COPY package.json package-lock.json ./
