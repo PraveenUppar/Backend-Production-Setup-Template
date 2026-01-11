@@ -1,0 +1,68 @@
+What production projects expect
+
+
+npm install -D jest ts-jest @types/jest
+npm install -D supertest @types/supertest
+npx ts-jest config:init
+
+
+You should have three levels:
+
+Unit Tests
+Test services (business logic)
+Mock DB / cache / queue
+
+Examples
+
+Todo creation rules
+Status transitions
+Validation logic
+Permission checks
+-----------------------------------------------------
+Tools
+Node.js → jest
+Java → JUnit + Mockito
+Go → testing + testify
+-----------------------------------------------------
+Integration Tests
+Real DB (Docker container)
+Test API endpoints
+DB schema + queries
+Cache behavior
+API → service → DB wiring
+
+Use:
+testcontainers
+Or docker-compose.test.yml
+-----------------------------------------------------
+Contract / API Tests
+Validate OpenAPI schema
+Ensure backward compatibility
+-----------------------------------------------------
+Test Data Management 
+
+Rules
+Each test starts with clean state
+No shared DB data
+No order-dependent tests
+-----------------------------------------------------
+Negative & Edge Case Tests (this separates pros)
+
+Add tests for:
+
+Empty input
+Duplicate todo
+Unauthorized access
+Rate-limited request
+Invalid pagination param
+
+-----------------------------------------------------
+CI Integration (mandatory)
+
+Your CI should:
+
+Install deps
+Start test infra
+Run unit tests
+Run integration tests
+Enforce coverage threshold

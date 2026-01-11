@@ -1,5 +1,5 @@
-import { prisma } from '../libs/prisma.js';
-import redis from '../redis/redis.js';
+import { prisma } from '../libs/prisma';
+import redis from '../redis/redis';
 
 const invalidateTodoCache = async () => {
   const keys = await redis.keys('todos:*');

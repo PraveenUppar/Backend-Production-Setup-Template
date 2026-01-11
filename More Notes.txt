@@ -1,0 +1,62 @@
+Observability Stack (VERY IMPORTANT)
+Production mindset
+
+Logs ≠ Monitoring ≠ Observability
+
+Step-by-step approach
+1️⃣ OpenTelemetry (foundation)
+
+Instrument:
+HTTP requests
+DB calls
+Cache calls
+
+Output:
+Traces
+Metrics
+
+2️⃣ Prometheus
+
+Scrape metrics (/metrics)
+
+App metrics:
+Request latency
+Error rate
+Throughput
+
+Grafana
+
+Create dashboards:
+
+API latency (p95)
+Error rate per endpoint
+DB response time
+Queue depth
+
+
+4️⃣ Alerts (even basic)
+
+High error rate
+Pod restart count
+High latency
+
+Queue (Asynchronous Processing)
+
+This separates good backend from serious backend.
+
+Use case ideas for Todo app
+Email notifications
+Activity audit logs
+Async cleanup tasks
+Webhooks
+
+Tools
+RabbitMQ / Kafka / Redis Queue
+Use at-least-once delivery
+Dead Letter Queue (DLQ)
+
+Show:
+Producer
+Consumer
+Retry logic
+Idempotency

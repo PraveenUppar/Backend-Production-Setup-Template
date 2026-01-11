@@ -1,7 +1,7 @@
 Phase 1: Data Modeling                              -- DONE
 Phase 2: API Development                            -- DONE
 Phase 3: Logging                                    -- DONE
-Phase 4: Testing                                    -- 
+Phase 4: Testing                                    -- DONE
 Phase 5: Caching                                    -- DONE
 Phase 6: Scaling & Deployment                       -- DONE
 Phase 7: Pagination                                 -- DONE
@@ -19,7 +19,11 @@ Phase 18 Authentication                             -- DONE
 Phase 19 Queue                                      -- 
 Phase 20 Security                                   --  
 Phase 21 Code Quality                               -- 
-
+Phase 22 Code Rabit                                 -- 
+Phase 23 qodo-code-review                           -- 
+Phase 24 Linting and Formatig                       -- 
+Phase 25 Open Telemetry                             --  
+Phase 26 Grafana and Prometus                       --
 ---------------------------------------------------------------------------
 Request → [Logger] → [Zod Validation] → Controller → Service → Database (If anything fails) ↘ [Global Error Handler] → Response
 ---------------------------------------------------------------------------
