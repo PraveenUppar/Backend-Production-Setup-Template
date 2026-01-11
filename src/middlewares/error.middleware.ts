@@ -5,19 +5,20 @@ import AppError from '../utils/AppError';
 import config from '../config';
 
 interface ErrorWithStatus extends Error {
-  statusCode?: number;
-  status?: string;
+  statusCode: number;
+  status: string;
   isOperational?: boolean;
 }
 
 const globalErrorHandler = (
-  err: ErrorWithStatus,
+  err: ErrorWithStatus | Error,
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
+  const error = err as ErrorWithStatus;
+  error.statusCode = error.statusCode || 500;
+  error.status = error.status || 'error';
 
   // Log error with context
   logger.error('Request failed', {
@@ -25,45 +26,62 @@ const globalErrorHandler = (
     method: req.method,
     path: req.originalUrl,
     userId: req.userId,
-    statusCode: err.statusCode,
-    message: err.message,
-    stack: config.isDevelopment ? err.stack : undefined,
-    error: err.name,
+    statusCode: error.statusCode,
+    message: error.message,
+    stack: config.isDevelopment ? error.stack : undefined,
+    error: error.name,
   });
 
   // Handle Prisma Errors
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
     // P2002: Unique constraint failed
-    if (err.code === 'P2002') {
-      const field = (err.meta?.target as string[])?.[0] || 'field';
+    if (error.code === 'P2002') {
+      const field = (error.meta?.target as string[])?.[0] || 'field';
       const appError = new AppError(`The ${field} is already taken.`, 409);
-      err = appError;
+      error.statusCode = appError.statusCode;
+      error.status = appError.status;
+      error.message = appError.message;
+      error.isOperational = appError.isOperational;
     }
     // P2025: Record not found
-    else if (err.code === 'P2025') {
+    else if (error.code === 'P2025') {
       const appError = new AppError('Record not found.', 404);
-      err = appError;
+      error.statusCode = appError.statusCode;
+      error.status = appError.status;
+      error.message = appError.message;
+      error.isOperational = appError.isOperational;
     }
     // P2003: Foreign key constraint failed
-    else if (err.code === 'P2003') {
+    else if (error.code === 'P2003') {
       const appError = new AppError('Invalid reference.', 400);
-      err = appError;
+      error.statusCode = appError.statusCode;
+      error.status = appError.status;
+      error.message = appError.message;
+      error.isOperational = appError.isOperational;
     }
   }
 
   // Handle JWT Errors
-  if (err.name === 'JsonWebTokenError') {
-    err = new AppError('Invalid token', 401);
+  if (error.name === 'JsonWebTokenError') {
+    const appError = new AppError('Invalid token', 401);
+    error.statusCode = appError.statusCode;
+    error.status = appError.status;
+    error.message = appError.message;
+    error.isOperational = appError.isOperational;
   }
-  if (err.name === 'TokenExpiredError') {
-    err = new AppError('Token expired', 401);
+  if (error.name === 'TokenExpiredError') {
+    const appError = new AppError('Token expired', 401);
+    error.statusCode = appError.statusCode;
+    error.status = appError.status;
+    error.message = appError.message;
+    error.isOperational = appError.isOperational;
   }
 
   // Send Response
   if (config.isDevelopment) {
-    sendErrorDev(err, res, req);
+    sendErrorDev(error, res, req);
   } else {
-    sendErrorProd(err, res);
+    sendErrorProd(error, res);
   }
 };
 

@@ -73,8 +73,8 @@ app.use('/health', healthRouter);
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1', todoRoute);
 
-// 404 handler
-app.all('*', (req: Request, res: Response, next: NextFunction) => {
+// 404 handler - catch all unmatched routes
+app.use((req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Route ${req.originalUrl} not found`, 404));
 });
 
