@@ -16,7 +16,7 @@ describe('User Service - Unit Tests', () => {
   });
 
   describe('createUserService', () => {
-    it('hashes password and creates user', async () => {
+    it('hashes password and creates user when email is unique', async () => {
       const userData = {
         email: 'test@example.com',
         password: 'plain-password',
@@ -30,15 +30,19 @@ describe('User Service - Unit Tests', () => {
         password: hashedPassword,
       };
 
+      // Mock: user doesn't exist
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
       // bcrypt.hash mock
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
-
       // prisma.user.create mock
       (prisma.user.create as jest.Mock).mockResolvedValue(createdUser);
 
       const result = await createUserService(userData);
 
       // Assertions
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { email: userData.email },
+      });
       expect(bcrypt.hash).toHaveBeenCalledWith(userData.password, 10);
 
       expect(prisma.user.create).toHaveBeenCalledWith({
@@ -49,6 +53,24 @@ describe('User Service - Unit Tests', () => {
       });
 
       expect(result).toEqual(createdUser);
+    });
+
+    it('throws error when email already exists', async () => {
+      const userData = {
+        email: 'existing@example.com',
+        password: 'plain-password',
+      };
+
+      const existingUser = {
+        id: '1',
+        email: userData.email,
+        password: 'hashed',
+      };
+
+      // Mock: user already exists
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(existingUser);
+
+      await expect(createUserService(userData)).rejects.toThrow();
     });
   });
 
@@ -65,7 +87,7 @@ describe('User Service - Unit Tests', () => {
       const result = await findUserService('test@example.com');
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { email: 'test@example.com' },
+        where: { email: 'test@example.com'.toLowerCase().trim() },
       });
 
       expect(result).toEqual(user);

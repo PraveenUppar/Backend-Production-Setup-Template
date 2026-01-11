@@ -7,60 +7,72 @@ import {
 import { generateToken } from '../utils/jwt';
 import AppError from '../utils/AppError';
 
-const registerUserController = async (
+/**
+ * Register a new user
+ */
+export const registerUserController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const { email, password } = req.body;
-    // zod validation
-    // if (!email || !password) {
-    //   return sendError(res, 400, 'Email and password are required');
-    // }
+
     const newUser = await createUserService({ email, password });
-    res.status(201).json({
+
+    return res.status(201).json({
       success: true,
       message: 'User registered successfully',
       data: {
+        id: newUser.id,
         email: newUser.email,
+        createdAt: newUser.createdAt,
       },
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     return next(new AppError('Failed to register user', 500));
   }
 };
 
-const loginUserController = async (
+/**
+ * Login user and return JWT token
+ */
+export const loginUserController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const { email, password } = req.body;
-    //  zod validation
-    // if (!email || !password) {
-    //   return sendError(res, 400, 'Email and password are required');
-    // }
 
     const user = await findUserService(email);
     if (!user) {
-      return next(new AppError('Invalid credentials', 404));
+      return next(new AppError('Invalid email or password', 401));
     }
+
     const isPasswordValid = await verifyUserService(password, user.password);
     if (!isPasswordValid) {
-      return next(new AppError('Invalid credentials', 404));
+      return next(new AppError('Invalid email or password', 401));
     }
+
     const token = generateToken(user.id);
-    res.status(200).json({
+
+    return res.status(200).json({
       success: true,
       message: 'Login successful',
       token: token,
-      user: { email: user.email },
+      user: {
+        id: user.id,
+        email: user.email,
+      },
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     return next(new AppError('Failed to login user', 500));
   }
 };
-
-export { registerUserController, loginUserController };

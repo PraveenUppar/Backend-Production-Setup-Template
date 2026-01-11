@@ -24,6 +24,29 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['node_modules/', 'dist/'],
+    files: ['**/*.js'],
+    languageOptions: {
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
+    ignores: [
+      'node_modules/',
+      'dist/',
+      'prisma.config.ts',
+      '**/*.test.ts',
+      '**/*.spec.ts',
+    ],
   },
 );

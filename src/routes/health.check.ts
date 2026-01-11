@@ -1,54 +1,70 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { prisma } from '../libs/prisma';
 import redis from '../redis/redis';
 
 const router = Router();
 
-// Without health checks:
-
-// Docker thinks a broken app is “up”
-// Kubernetes will route traffic to dead pods
-// Load balancers won’t know to stop traffic
-
-router.get('/database', async (_req, res) => {
+/**
+ * Health check endpoint for database and Redis
+ * Used by Kubernetes liveness and readiness probes
+ */
+router.get('/database', async (_req: Request, res: Response) => {
   try {
+    // Check database connection
     await prisma.$queryRaw`SELECT 1`;
-    const pong = await redis.ping();
+
+    // Check Redis connection
+    const redisPong = await redis.ping();
+    const redisStatus = redisPong === 'PONG' ? 'Connected' : 'Disconnected';
+
     return res.status(200).json({
-      status: 'Active',
+      status: 'healthy',
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
       services: {
         database: 'Connected',
-        redis: pong === 'PONG' ? 'Connected' : 'Failed to Connect to Redis',
+        redis: redisStatus,
       },
     });
-  } catch (err) {
+  } catch (error) {
     return res.status(503).json({
-      status: 'error',
-      message: 'Failed to connect to the Database',
+      status: 'unhealthy',
+      message: 'Service unavailable',
+      timestamp: new Date().toISOString(),
+      services: {
+        database: 'Disconnected',
+        redis: 'Unknown',
+      },
     });
   }
 });
 
-// router.get('/redis', async (_req, res) => {
-//   try {
-//     const pong = await redis.ping();
+/**
+ * Simple liveness probe
+ */
+router.get('/live', (_req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'alive',
+    timestamp: new Date().toISOString(),
+  });
+});
 
-//     res.status(200).json({
-//       status: 'Active',
-//       uptime: process.uptime(),
-//       timestamp: new Date().toISOString(),
-//       services: {
-//         redis: pong === 'PONG' ? 'Connected' : 'Failed to Connect to Redis',
-//       },
-//     });
-//   } catch (error: any) {
-//     res.status(503).json({
-//       status: 'Inactive',
-//       error: error.message,
-//     });
-//   }
-// });
+/**
+ * Simple readiness probe
+ */
+router.get('/ready', async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({
+      status: 'ready',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'not ready',
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
 
 export default router;

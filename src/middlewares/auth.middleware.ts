@@ -1,29 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import AppError from '../utils/AppError';
+import { verifyToken } from '../utils/jwt';
+import config from '../config';
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   // Skip authentication in test environment
-  if (process.env.NODE_ENV === 'test') {
-    req.userId = process.env.TEST_USER_ID!;
+  if (config.isTest) {
+    if (!config.test.userId) {
+      return next(new AppError('TEST_USER_ID not configured', 500));
+    }
+    req.userId = config.test.userId;
     return next();
   }
+
   const authHeader = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return next(new AppError('Authentication required', 401));
   }
 
   const token = authHeader.split(' ')[1];
+
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return next(new AppError('Authentication required', 401));
   }
+
   try {
-    const secret = '09c7n0we987w0c89rcq8wnrqw8np8qw7ce8qn7wrpc8qc';
-    const decoded = jwt.verify(token, secret) as { id: string };
+    const decoded = verifyToken(token);
     req.userId = decoded.id;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return next(new AppError('Invalid or expired token', 401));
   }
 };
-
-export default authMiddleware;

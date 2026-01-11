@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
-        run: docker build -t $IMAGE_NAME:latest .
+        run: docker build -f docker/Dockerfile -t $IMAGE_NAME:latest .
 
       - name: Push image
         run: docker push $IMAGE_NAME:latest

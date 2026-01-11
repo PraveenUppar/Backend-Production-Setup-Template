@@ -1,7 +1,5 @@
 import winston from 'winston';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import config from '../config';
 
 const levels = {
   error: 0,
@@ -21,41 +19,55 @@ const colors = {
 
 winston.addColors(colors);
 
-const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-  levels,
-  format: winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    // Colorize only in development
-    process.env.NODE_ENV === 'development'
-      ? winston.format.colorize({ all: true })
-      : winston.format.uncolorize(),
+// Custom format for structured logging
+const logFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.errors({ stack: true }),
+  winston.format.splat(),
+  winston.format.json(),
+);
 
-    // Custom print format
-    winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`,
-    ),
+// Development format (human-readable)
+const devFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.colorize({ all: true }),
+  winston.format.printf(
+    (info) =>
+      `${info.timestamp} ${info.level}: ${info.message} ${
+        info.stack ? `\n${info.stack}` : ''
+      }`,
   ),
-  transports: [
-    new winston.transports.Console(),
-    // In production, save errors to a file
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/all.log' }),
-  ],
+);
+
+const transports: winston.transport[] = [
+  new winston.transports.Console({
+    format: config.isDevelopment ? devFormat : logFormat,
+  }),
+];
+
+// Only add file transports in non-containerized environments
+// In Docker/Kubernetes, logs should go to stdout/stderr
+if (!process.env.DOCKER_ENV && !config.isTest) {
+  transports.push(
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+      format: logFormat,
+    }),
+    new winston.transports.File({
+      filename: 'logs/all.log',
+      format: logFormat,
+    }),
+  );
+}
+
+const logger = winston.createLogger({
+  level: config.isDevelopment ? 'debug' : 'info',
+  levels,
+  format: config.isDevelopment ? devFormat : logFormat,
+  transports,
+  // Don't exit on handled exceptions
+  exitOnError: false,
 });
 
 export default logger;
-
-// You write logs to files:
-// new winston.transports.File({ filename: 'logs/error.log' })
-
-// Inside Docker:
-// Containers are ephemeral
-// Files disappear
-// Kubernetes ignores them
-
-// Why:
-
-// Docker captures stdout
-// Kubernetes reads container logs
-// This is how production works

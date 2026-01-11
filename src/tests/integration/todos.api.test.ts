@@ -31,8 +31,8 @@ describe('Todo API - Integration Tests', () => {
     await prisma.$disconnect();
   });
 
-  it('POST /api/v1/create creates a todo', async () => {
-    const response = await request(app).post('/api/v1/create').send({
+  it('POST /api/v1/todos creates a todo', async () => {
+    const response = await request(app).post('/api/v1/todos').send({
       title: 'Integration Test Todo',
       completed: false,
     });
@@ -41,11 +41,15 @@ describe('Todo API - Integration Tests', () => {
     expect(response.body.success).toBe(true);
     expect(response.body.data.title).toBe('Integration Test Todo');
   });
-  it('GET /api/v1/todo - returns todos', async () => {
-    const res = await request(app).get('/api/v1/todo');
+
+  it('GET /api/v1/todos - returns paginated todos', async () => {
+    const res = await request(app).get('/api/v1/todos?page=1&limit=10');
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(Array.isArray(res.body.data.data)).toBe(true);
+    expect(res.body.data.meta).toBeDefined();
+    expect(res.body.data.meta.currentPage).toBe(1);
+    expect(res.body.data.meta.itemsPerPage).toBe(10);
   });
 });

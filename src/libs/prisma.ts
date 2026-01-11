@@ -1,10 +1,12 @@
-import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import config from '../config';
 
-const connectionString = `${process.env.DATABASE_URL}`;
+const adapter = new PrismaPg({ connectionString: config.database.url });
 
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({
+  adapter,
+  log: config.isDevelopment ? ['query', 'error', 'warn'] : ['error', 'warn'],
+});
 
 export { prisma };

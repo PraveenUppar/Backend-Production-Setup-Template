@@ -1,28 +1,47 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import config from '../config';
+import logger from '../utils/logger';
 
-const traceExporter = new OTLPTraceExporter({
-  url:
-    process.env.OTEL_EXPORTER_OTLP_ENDPOINT ||
-    'http://localhost:4318/v1/traces',
-});
-
-export const otelSDK = new NodeSDK({
-  serviceName: 'todo-backend',
-  traceExporter,
-  instrumentations: [getNodeAutoInstrumentations()],
-});
+let otelSDK: NodeSDK | null = null;
 
 export const startTracing = async () => {
-  if (process.env.NODE_ENV === 'test') {
-    console.log('Tracing disabled in test env');
+  if (config.isTest) {
+    logger.debug('Tracing disabled in test environment');
     return;
   }
-  await otelSDK.start();
-  console.log('OpenTelemetry tracing initialized');
+
+  if (!config.otel.endpoint) {
+    logger.warn('OpenTelemetry endpoint not configured, tracing disabled');
+    return;
+  }
+
+  try {
+    const traceExporter = new OTLPTraceExporter({
+      url: config.otel.endpoint,
+    });
+
+    otelSDK = new NodeSDK({
+      serviceName: config.otel.serviceName,
+      traceExporter,
+      instrumentations: [getNodeAutoInstrumentations()],
+    });
+
+    await otelSDK.start();
+    logger.info('OpenTelemetry tracing initialized');
+  } catch (error) {
+    logger.error('Failed to initialize OpenTelemetry tracing:', error);
+  }
 };
 
 export const stopTracing = async () => {
-  await otelSDK.shutdown();
+  if (otelSDK) {
+    try {
+      await otelSDK.shutdown();
+      logger.info('OpenTelemetry tracing stopped');
+    } catch (error) {
+      logger.error('Error stopping OpenTelemetry tracing:', error);
+    }
+  }
 };

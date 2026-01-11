@@ -1,9 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { Prisma } from '@prisma/client';
 import logger from '../utils/logger';
+import AppError from '../utils/AppError';
+import config from '../config';
+
+interface ErrorWithStatus extends Error {
+  statusCode?: number;
+  status?: string;
+  isOperational?: boolean;
+}
 
 const globalErrorHandler = (
-  err: any,
+  err: ErrorWithStatus,
   req: Request,
   res: Response,
   next: NextFunction,
@@ -11,58 +19,80 @@ const globalErrorHandler = (
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  // log the method, URL, status code, and the error message
-  logger.error('request_failed', {
+  // Log error with context
+  logger.error('Request failed', {
+    requestId: req.requestId,
     method: req.method,
     path: req.originalUrl,
+    userId: req.userId,
     statusCode: err.statusCode,
     message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    stack: config.isDevelopment ? err.stack : undefined,
+    error: err.name,
   });
 
-  // Handle Specific Prisma Errors (Database issues)
+  // Handle Prisma Errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     // P2002: Unique constraint failed
     if (err.code === 'P2002') {
       const field = (err.meta?.target as string[])?.[0] || 'field';
-      err.code = '409';
-      err.message = `The ${field} is already taken.`;
+      const appError = new AppError(`The ${field} is already taken.`, 409);
+      err = appError;
     }
     // P2025: Record not found
-    if (err.code === 'P2025') {
-      err.code = '404';
-      err.message = 'Record not found.';
+    else if (err.code === 'P2025') {
+      const appError = new AppError('Record not found.', 404);
+      err = appError;
+    }
+    // P2003: Foreign key constraint failed
+    else if (err.code === 'P2003') {
+      const appError = new AppError('Invalid reference.', 400);
+      err = appError;
     }
   }
 
-  // Send Response (Dev vs Prod)
-  if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+  // Handle JWT Errors
+  if (err.name === 'JsonWebTokenError') {
+    err = new AppError('Invalid token', 401);
+  }
+  if (err.name === 'TokenExpiredError') {
+    err = new AppError('Token expired', 401);
+  }
+
+  // Send Response
+  if (config.isDevelopment) {
+    sendErrorDev(err, res, req);
   } else {
     sendErrorProd(err, res);
   }
 };
 
-const sendErrorDev = (err: any, res: Response) => {
+const sendErrorDev = (err: ErrorWithStatus, res: Response, req: Request) => {
   res.status(err.statusCode).json({
     success: false,
     status: err.status,
     message: err.message,
-    stack: err.stack, // Show stack trace in Dev
-    error: err,
+    requestId: req.requestId,
+    stack: err.stack,
+    ...(config.isDevelopment && { error: err }),
   });
 };
 
-const sendErrorProd = (err: any, res: Response) => {
+const sendErrorProd = (err: ErrorWithStatus, res: Response) => {
   // Operational, trusted error: send message to client
-  if (err.isOperational || err.statusCode !== 500) {
+  if (err.isOperational) {
     res.status(err.statusCode).json({
       success: false,
       status: err.status,
       message: err.message,
     });
   } else {
-    // Programming or other unknown error
+    // Programming or other unknown error: don't leak error details
+    logger.error('Unexpected error:', {
+      message: err.message,
+      stack: err.stack,
+    });
+
     res.status(500).json({
       success: false,
       status: 'error',

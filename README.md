@@ -1,1 +1,836 @@
-A production ready template for scalable backend microservice.
+# Production-Ready Todo Backend API
+
+A production-grade RESTful API for managing todos, built with modern backend engineering principles. This project demonstrates industry-standard practices for building scalable, observable, and maintainable backend services.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [API Documentation](#api-documentation)
+- [Getting Started](#getting-started)
+- [Development](#development)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Observability](#observability)
+- [Security](#security)
+- [Contributing](#contributing)
+- [Project Structure](#project-structure)
+
+## Overview
+
+This Todo Backend API is designed as a reference implementation showcasing production-ready backend development practices. It includes:
+
+- **RESTful API** with proper HTTP semantics
+- **Authentication & Authorization** using JWT
+- **Database Management** with Prisma ORM
+- **Caching** with Redis for performance optimization
+- **Rate Limiting** to prevent abuse
+- **Comprehensive Testing** (Unit + Integration)
+- **Observability** with OpenTelemetry, Prometheus, and Grafana
+- **Containerization** with Docker
+- **Orchestration** with Kubernetes
+- **CI/CD** pipelines for automated testing and deployment
+- **Health Checks** for reliability monitoring
+
+## Features
+
+### Core Functionality
+
+- ✅ User registration and authentication
+- ✅ JWT-based authentication
+- ✅ CRUD operations for todos
+- ✅ User-specific todo isolation
+- ✅ Pagination support
+- ✅ Input validation with Zod
+- ✅ Comprehensive error handling
+
+### Infrastructure & Operations
+
+- ✅ Docker containerization
+- ✅ Kubernetes deployment with HPA
+- ✅ CI/CD with GitHub Actions
+- ✅ Health check endpoints
+- ✅ Graceful shutdown handling
+- ✅ Database migrations with Prisma
+
+### Observability & Monitoring
+
+- ✅ Structured logging with Winston
+- ✅ Prometheus metrics collection
+- ✅ OpenTelemetry distributed tracing
+- ✅ Grafana dashboards
+- ✅ Request/response logging
+
+### Security
+
+- ✅ Helmet.js for security headers
+- ✅ CORS configuration
+- ✅ Rate limiting (per IP and per user)
+- ✅ Password hashing with bcrypt
+- ✅ Input validation and sanitization
+
+### Code Quality
+
+- ✅ TypeScript for type safety
+- ✅ ESLint for code linting
+- ✅ Prettier for code formatting
+- ✅ Husky for git hooks
+- ✅ Automated code review (CodeRabbit)
+
+## Tech Stack
+
+### Core
+
+- **Runtime**: Node.js 20
+- **Framework**: Express.js 5.x
+- **Language**: TypeScript 5.x
+- **Database**: PostgreSQL 15
+- **ORM**: Prisma 7.x
+
+### Caching & Rate Limiting
+
+- **Cache**: Upstash Redis
+- **Rate Limiting**: @upstash/ratelimit
+
+### Authentication
+
+- **JWT**: jsonwebtoken
+- **Password Hashing**: bcrypt
+
+### Validation
+
+- **Schema Validation**: Zod 4.x
+
+### Observability
+
+- **Logging**: Winston
+- **Metrics**: Prometheus (prom-client, express-prom-bundle)
+- **Tracing**: OpenTelemetry SDK
+
+### Security
+
+- **Security Headers**: Helmet
+- **CORS**: cors middleware
+
+### Testing
+
+- **Test Framework**: Jest
+- **HTTP Testing**: Supertest
+- **Coverage**: Jest coverage
+
+### DevOps
+
+- **Containerization**: Docker
+- **Orchestration**: Kubernetes
+- **CI/CD**: GitHub Actions
+
+### Development Tools
+
+- **Code Quality**: ESLint, Prettier
+- **Git Hooks**: Husky
+- **Process Manager**: nodemon (dev)
+
+## Architecture
+
+### High-Level Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Client Layer                         │
+│                    (Web/Mobile/API Clients)                 │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    API Gateway / Ingress                    │
+│              (Kubernetes Ingress / Load Balancer)           │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Application Layer                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │   Express    │  │  Middlewares │  │  Controllers │       │
+│  │   Server     │  │  (Auth,      │  │  (Business   │       │
+│  │              │  │   RateLimit, │  │   Logic)     │       │
+│  │              │  │   Validation) │  │              │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘       │
+│         │                 │                  │              │
+│         └─────────────────┴──────────────────┘              │
+│                           │                                 │
+│                           ▼                                 │
+│                  ┌─────────────────┐                        │
+│                  │   Service Layer  │                       │
+│                  │  (Data Access,   │                       │
+│                  │   Business Logic)│                       │
+│                  └─────────┬─────────┘                      │
+└───────────────────────────┼─────────────────────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+        ▼                   ▼                   ▼
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│  PostgreSQL   │  │  Redis Cache  │  │  Observability│
+│   Database    │  │   (Upstash)   │  │  (Prometheus, │
+│               │  │                │  │   Grafana,    │
+│               │  │                │  │   OpenTelemetry)│
+└───────────────┘  └───────────────┘  └───────────────┘
+```
+
+## 📁 Project Structure
+
+```
+.
+├── .github/
+│   └── workflows/          # CI/CD pipelines
+├── docker/                 # Docker configuration
+│   ├── Dockerfile         # Docker image definition
+│   ├── docker-compose.yaml
+│   ├── docker-compose.test.yaml
+│   └── docker-compose.observability.yml
+├── docs/                   # Documentation and notes
+│   ├── Notes.txt
+│   └── setting.json
+├── k8s/                    # Kubernetes manifests
+│   ├── configmap.yaml
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── secret.yaml
+│   └── service.yaml
+├── src/                    # Source code
+│   ├── config/            # Configuration management
+│   ├── controllers/       # Request handlers
+│   ├── libs/              # External library wrappers
+│   ├── middlewares/        # Express middlewares
+│   ├── observability/     # Monitoring & tracing
+│   ├── redis/             # Redis client
+│   ├── routes/            # Route definitions
+│   ├── schemas/           # Validation schemas
+│   ├── services/          # Business logic
+│   ├── tests/             # Test files
+│   ├── types/             # TypeScript types
+│   ├── utils/             # Utility functions
+│   ├── app.ts            # Express app
+│   └── server.ts         # Server entry point
+├── dist/                   # Compiled JavaScript (generated)
+├── logs/                   # Application logs
+├── node_modules/           # Dependencies
+├── observability/          # Prometheus config
+├── prisma/                 # Database schema and migrations
+│   ├── migrations/
+│   └── schema.prisma
+├── .coderabbit.yaml        # CodeRabbit config
+├── .dockerignore
+├── .eslintignore
+├── .gitignore
+├── eslint.config.mjs       # ESLint configuration
+├── jest.config.js          # Jest configuration
+├── jest.setup.js           # Jest setup
+├── nodemon.json            # Nodemon configuration
+├── package.json
+├── package-lock.json
+├── prisma.config.ts
+├── README.md               # This file
+├── tsconfig.json           # TypeScript configuration
+└── .env.example            # Environment variables template
+```
+
+## API Documentation
+
+### Base URL
+
+```
+Development: http://localhost:3000
+Production: https://api.example.com
+```
+
+### Authentication
+
+All protected endpoints require a JWT token in the Authorization header:
+
+```
+Authorization: Bearer <token>
+```
+
+### Endpoints
+
+#### Authentication
+
+##### Register User
+
+```http
+POST /api/v1/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+```
+
+**Response (201 Created)**
+
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+**Error Response (409 Conflict)**
+
+```json
+{
+  "success": false,
+  "message": "The email is already taken."
+}
+```
+
+##### Login
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com"
+  }
+}
+```
+
+#### Todos
+
+##### Create Todo
+
+```http
+POST /api/v1/todos
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Complete project documentation",
+  "completed": false
+}
+```
+
+**Response (201 Created)**
+
+```json
+{
+  "success": true,
+  "message": "Todo created successfully",
+  "data": {
+    "id": "uuid",
+    "title": "Complete project documentation",
+    "completed": false,
+    "userId": "user-uuid",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+##### Get Todos (Paginated)
+
+```http
+GET /api/v1/todos?page=1&limit=10
+Authorization: Bearer <token>
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Todos retrieved successfully",
+  "data": {
+    "data": [
+      {
+        "id": "uuid",
+        "title": "Complete project documentation",
+        "completed": false,
+        "userId": "user-uuid",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "meta": {
+      "totalItems": 25,
+      "totalPages": 3,
+      "currentPage": 1,
+      "itemsPerPage": 10
+    }
+  }
+}
+```
+
+##### Update Todo
+
+```http
+PATCH /api/v1/todos/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Updated title",
+  "completed": true
+}
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Todo updated successfully",
+  "data": {
+    "id": "uuid",
+    "title": "Updated title",
+    "completed": true,
+    "userId": "user-uuid",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T01:00:00.000Z"
+  }
+}
+```
+
+##### Delete Todo
+
+```http
+DELETE /api/v1/todos/:id
+Authorization: Bearer <token>
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Todo deleted successfully"
+}
+```
+
+#### Health Checks
+
+##### Database Health Check
+
+```http
+GET /health/database
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "status": "healthy",
+  "uptime": 3600,
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "services": {
+    "database": "Connected",
+    "redis": "Connected"
+  }
+}
+```
+
+**Response (503 Service Unavailable)**
+
+```json
+{
+  "status": "unhealthy",
+  "message": "Service unavailable",
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "services": {
+    "database": "Disconnected",
+    "redis": "Unknown"
+  }
+}
+```
+
+### Error Responses
+
+All errors follow a consistent format:
+
+```json
+{
+  "success": false,
+  "status": "fail" | "error",
+  "message": "Error message description"
+}
+```
+
+**Status Codes:**
+
+- `400` - Bad Request (Validation errors)
+- `401` - Unauthorized (Authentication required)
+- `403` - Forbidden (Authorization failed)
+- `404` - Not Found (Resource not found)
+- `409` - Conflict (Duplicate resource)
+- `429` - Too Many Requests (Rate limit exceeded)
+- `500` - Internal Server Error
+
+### Rate Limiting
+
+Rate limits are applied per IP address and per authenticated user:
+
+- **Limit**: 30 requests per 60 seconds (sliding window)
+- **Headers**:
+  - `X-RateLimit-Limit`: Maximum requests allowed
+  - `X-RateLimit-Remaining`: Remaining requests
+  - `X-RateLimit-Reset`: Reset timestamp
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- PostgreSQL 15.x or higher
+- Redis (Upstash account or local Redis instance)
+- Docker & Docker Compose (optional, for containerized setup)
+- Kubernetes cluster (optional, for K8s deployment)
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Server
+NODE_ENV=development
+PORT=3000
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/todo_db
+DIRECT_URL=postgresql://user:password@localhost:5432/todo_db
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key-must-be-at-least-32-characters-long
+JWT_EXPIRES_IN=1h
+
+# Redis (Upstash)
+UPSTASH_REDIS_URL=https://your-redis-instance.upstash.io
+UPSTASH_REDIS_TOKEN=your-redis-token
+
+# OpenTelemetry (optional)
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
+OTEL_SERVICE_NAME=todo-backend
+
+# Test Environment
+TEST_USER_ID=test-user-id-for-testing
+
+# CORS
+CORS_ORIGIN=*
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX_REQUESTS=30
+```
+
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone <repository-url>
+cd production-ready-backend-template
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Set up the database**
+
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Run migrations
+npx prisma migrate deploy
+
+# (Optional) Seed database
+npx prisma db seed
+```
+
+4. **Start the development server**
+
+```bash
+npm run dev
+```
+
+The server will start on `http://localhost:3000`
+
+## Development
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev          # Start development server with nodemon
+npm run build        # Build TypeScript to JavaScript
+npm start            # Start production server
+
+# Testing
+npm test             # Run all tests
+npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix ESLint errors
+npm run format       # Check code formatting
+npm run format:fix   # Fix code formatting
+```
+
+### Development Workflow
+
+1. **Create a feature branch**
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. **Make your changes**
+   - Follow TypeScript best practices
+   - Write tests for new features
+   - Update documentation as needed
+
+3. **Run quality checks**
+
+```bash
+npm run lint
+npm run format
+npm test
+```
+
+4. **Commit your changes**
+
+```bash
+git add .
+git commit -m "feat: add new feature"
+```
+
+5. **Push and create PR**
+
+```bash
+git push origin feature/your-feature-name
+```
+
+### Code Style
+
+- **TypeScript**: Strict mode enabled
+- **Linting**: ESLint with TypeScript rules
+- **Formatting**: Prettier
+- **Git Hooks**: Husky pre-commit hooks
+
+## Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run in watch mode
+npm run test:watch
+```
+
+### Test Environment
+
+Tests use a separate test database and mock external services:
+
+- Redis is mocked
+- Authentication is bypassed with `TEST_USER_ID`
+- Rate limiting is disabled
+
+##Docker Deployment
+
+### Build Image
+
+```bash
+docker build -f docker/Dockerfile -t todo-backend:latest .
+```
+
+### Run Container
+
+```bash
+docker run -p 3000:3000 \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/db \
+  -e JWT_SECRET=your-secret \
+  todo-backend:latest
+```
+
+### Docker Compose
+
+```bash
+# Start application with dependencies
+docker-compose -f docker/docker-compose.yaml up -d
+
+# View logs
+docker-compose -f docker/docker-compose.yaml logs -f backend
+
+# Stop services
+docker-compose -f docker/docker-compose.yaml down
+```
+
+## Kubernetes Deployment
+
+### Prerequisites
+
+- Kubernetes cluster (v1.24+)
+- kubectl configured
+- PostgreSQL and Redis accessible from cluster
+
+### Deploy
+
+1. **Create namespace**
+
+```bash
+kubectl create namespace todo-backend
+```
+
+2. **Create secrets**
+
+```bash
+kubectl create secret generic todo-backend-secrets \
+  --from-literal=DATABASE_URL=postgresql://... \
+  --from-literal=JWT_SECRET=... \
+  --from-literal=UPSTASH_REDIS_URL=... \
+  --from-literal=UPSTASH_REDIS_TOKEN=... \
+  -n todo-backend
+```
+
+3. **Apply configurations**
+
+```bash
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/secret.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/ingress.yaml
+kubectl apply -f k8s/hpa.yaml
+```
+
+### Verify Deployment
+
+```bash
+# Check pods
+kubectl get pods -n todo-backend
+
+# Check services
+kubectl get svc -n todo-backend
+
+# Check ingress
+kubectl get ingress -n todo-backend
+
+# View logs
+kubectl logs -f deployment/todo-backend -n todo-backend
+```
+
+### Horizontal Pod Autoscaling
+
+The HPA automatically scales pods based on CPU utilization:
+
+- **Min replicas**: 2
+- **Max replicas**: 4
+- **Target CPU**: 50%
+
+## Observability
+
+### Metrics
+
+Prometheus metrics are exposed at `/metrics`:
+
+- HTTP request duration
+- HTTP request count
+- Error rates
+- System metrics (CPU, memory, etc.)
+
+### Logging
+
+Structured logging with Winston:
+
+- **Console**: Development logs
+- **File**: Production logs (`logs/all.log`, `logs/error.log`)
+- **Format**: JSON in production, colored in development
+
+### Tracing
+
+OpenTelemetry distributed tracing:
+
+- Automatic instrumentation
+- HTTP request tracing
+- Database query tracing
+- Custom spans for business logic
+
+### Grafana Dashboards
+
+Access Grafana at `http://localhost:3001` (when using `docker/docker-compose.observability.yml`)
+
+**Key Metrics:**
+
+- Request rate
+- Error rate
+- Response time (p50, p95, p99)
+- Database connection pool
+- Cache hit rate
+
+## 🤝 Contributing
+
+### Development Process
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Write/update tests
+5. Ensure all tests pass (`npm test`)
+6. Run linting and formatting (`npm run lint:fix && npm run format:fix`)
+7. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+8. Push to the branch (`git push origin feature/amazing-feature`)
+9. Open a Pull Request
+
+### Commit Message Convention
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation changes
+- `style:` Code style changes (formatting, etc.)
+- `refactor:` Code refactoring
+- `test:` Adding or updating tests
+- `chore:` Maintenance tasks
+
+### Code Review Process
+
+1. All PRs require at least one approval
+2. CI checks must pass
+3. Code coverage should not decrease
+4. Follow existing code patterns and conventions
+
+**Note**: This is a learning project demonstrating production-ready backend practices. For production use, ensure all security measures are properly configured and secrets are managed securely.

@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { ZodObject, ZodError } from 'zod';
+import { ZodError, ZodSchema } from 'zod';
+import AppError from '../utils/AppError';
 
+/**
+ * Validation middleware factory
+ * Validates request body, query, and params against Zod schema
+ */
 const validate =
-  (schema: ZodObject) =>
+  (schema: ZodSchema) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.parseAsync({
@@ -12,16 +17,18 @@ const validate =
       });
       next();
     } catch (error) {
-      // If validation fails, format the error nicely
       if (error instanceof ZodError) {
-        return res.status(400).json({
-          success: false,
-          message: 'Validation Error',
-          errors: error.issues.map((err: any) => ({
-            field: err.path[1],
-            message: err.message, // e.g., "Invalid email format"
-          })),
-        });
+        const formattedErrors = error.issues.map((issue) => ({
+          field: issue.path.join('.'),
+          message: issue.message,
+        }));
+
+        return next(
+          new AppError(
+            `Validation failed: ${formattedErrors.map((e) => e.message).join(', ')}`,
+            400,
+          ),
+        );
       }
       next(error);
     }
